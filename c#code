@@ -1,0 +1,89 @@
+/*
+ * Created by SharpDevelop.
+ * User: Yan
+ * Date: 02/04/2026
+ * Time: 01:52
+ * 
+ * To change this template use Tools | Options | Coding | Edit Standard Headers.
+ */
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Windows.Forms;
+
+namespace jogoSpace
+{
+	public partial class MainForm : Form
+	{
+		// global var
+		PictureBox fundo = new PictureBox();
+		PictureBox naveJogador = new PictureBox();
+		PictureBox naveInimigo = new PictureBox();
+		PictureBox tiro = new PictureBox();
+		Label lbl_hpinimigo = new Label();
+		int hpInimigo = 100;
+		
+		// gameTimer
+		Timer gametimer = new Timer();
+		
+		// criando controles
+		int sentidoInimigo = 1;
+		int velocidadeInimigo = 10;
+		int sentidoTiro = 1;
+		int velocidadeTiro = 30;
+		bool tiroAtivo = false;
+		
+		// crianddo Random
+		Random rnd = new Random();
+		
+		public MainForm() // Método construtor
+		{
+			InitializeComponent();
+			
+			// configurando mainForm
+			Width = 1920; // Largura da imagem
+			Height = 1080; // Altura da imagem
+			FormBorderStyle = FormBorderStyle.None; // Border remove
+			this.WindowState = FormWindowState.Maximized; // Tela cheia
+			BackColor = Color.Black; // Padrão preto 
+			KeyPreview = true;
+			
+			// Label do Hitpoint Inimigo
+			lbl_hpinimigo.Parent = fundo; // Herda de fundo
+			lbl_hpinimigo.Left = 1720; // Define a posição horizontal
+			lbl_hpinimigo.Top = 990; // Define a posição vertical
+			lbl_hpinimigo.ForeColor = Color.Aqua; // Cor do texto
+			lbl_hpinimigo.Font = new Font("Arial", 14); // Fonte do texto
+			lbl_hpinimigo.Text = "HP Inimigo: 100"; // Text de hp inimigo
+			lbl_hpinimigo.AutoSize = true; // Label autoSize
+			
+			// Fundo
+			fundo.Parent = this; // Herda do MainForm
+			fundo.Width = this.Width; // Largura herdada do MainForm
+			fundo.Height = this.Height+50; // Altura herdada do MainForm somada com 50
+			fundo.SizeMode = PictureBoxSizeMode.StretchImage; // Modo da imagem para stretch
+			fundo.BackColor = Color.Black; // Fundo preto
+			fundo.Load("fundo.png"); // Carregando imagem da pasta debug
+			
+			// naveJogador
+			naveJogador.Parent = fundo; // naveJogador herda de fundo
+			naveJogador.Width = 350; // Largura da imagem
+			naveJogador.Height = 260; // Altura da imagem
+			naveJogador.SizeMode = PictureBoxSizeMode.StretchImage; // Modo da imagem para stretch
+			naveJogador.Load("naveJogador.png"); // Carregando imagem da pasta debug
+			naveJogador.BackColor = Color.Transparent; // Fundo do PictureBox(naveJogador) transparente
+			naveJogador.Left = 200; // Definindo hitbox
+			naveJogador.Top = 420; // Definindo hitbox
+			
+			// naveInimigo
+			naveJogador.Parent = fundo; // naveInimigo herda de fundo
+			naveJogador.Width = 200; // Largura da imagem
+			naveJogador.Height = 95; // Altura da imagem
+			naveJogador.SizeMode = PictureBoxSizeMode.StretchImage; // Modo da imagem para stretch
+			naveJogador.Load("naveInimigo.png"); // Carregando imagem da pasta debug
+			naveJogador.BackColor = Color.Transparent; // Fundo do PictureBox(naveJogador) transparente
+			naveJogador.Left = 200; // Definindo hitbox
+			naveJogador.Top = 420; // Definindo hitbox
+		}
+	}
+}
