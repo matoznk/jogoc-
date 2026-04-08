@@ -1,11 +1,3 @@
-/*
- * Created by SharpDevelop.
- * User: Yan
- * Date: 02/04/2026
- * Time: 01:52
- * 
- * To change this template use Tools | Options | Coding | Edit Standard Headers.
- */
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -21,17 +13,20 @@ namespace jogoSpace
         PictureBox tiroJogador = new PictureBox();
         PictureBox tiroInimigo = new PictureBox();
         Label lbl_hpinimigo = new Label();
+        Label lbl_hpjogador = new Label();
         int hpInimigo = 100;
+        int hpJogador = 100;
 
         // gameTimer
         Timer gameTimer = new Timer();
 
         // criando controles
         int sentidoInimigo = 1;
-        int velocidadeInimigo = 10;
+        int velocidadeInimigo = 5;
         int sentidoTiro = 1;
-        int velocidadeTiro = 15;
+        int velocidadeTiro = 25;
         bool tiroAtivo = false;
+        bool tiroInimigoAtivo = false;
 
         // criando Random
         Random rnd = new Random();
@@ -48,22 +43,30 @@ namespace jogoSpace
             BackColor = Color.Black; 
             KeyPreview = true;
 
+            // Fundo
+            fundo.Parent = this;
+            fundo.Dock = DockStyle.Fill;
+            fundo.SizeMode = PictureBoxSizeMode.StretchImage; 
+            fundo.BackColor = Color.Black; 
+            fundo.Load("fundo.png"); 
+
             // Label do Hitpoint Inimigo
             lbl_hpinimigo.Parent = fundo;
-            lbl_hpinimigo.Left = 1720;
-            lbl_hpinimigo.Top = 990;
+            lbl_hpinimigo.Left = 1300;
+            lbl_hpinimigo.Top = 800;
             lbl_hpinimigo.ForeColor = Color.Aqua;
             lbl_hpinimigo.Font = new Font("Arial", 14);
             lbl_hpinimigo.Text = "HP Inimigo: " + hpInimigo;
             lbl_hpinimigo.AutoSize = true;
 
-            // Fundo
-            fundo.Parent = this; 
-            fundo.Width = this.Width; 
-            fundo.Height = this.Height; 
-            fundo.SizeMode = PictureBoxSizeMode.StretchImage; 
-            fundo.BackColor = Color.Black; 
-            fundo.Load("fundo.png"); 
+            // Label do Hitpoint Jogador
+            lbl_hpjogador.Parent = fundo;
+            lbl_hpjogador.Left = 75;
+            lbl_hpjogador.Top = 800;
+            lbl_hpjogador.ForeColor = Color.Aqua;
+            lbl_hpjogador.Font = new Font("Arial", 14);
+            lbl_hpjogador.Text = "HP Jogador: " + hpJogador;
+            lbl_hpjogador.AutoSize = true;
 
             // naveJogador
             naveJogador.Parent = fundo; 
@@ -72,7 +75,7 @@ namespace jogoSpace
             naveJogador.SizeMode = PictureBoxSizeMode.StretchImage; 
             naveJogador.Load("naveJogador.png");
             naveJogador.BackColor = Color.Transparent; 
-            naveJogador.Left = 200; 
+            naveJogador.Left = 100; 
             naveJogador.Top = 420;   
 
             // naveInimigo
@@ -82,7 +85,7 @@ namespace jogoSpace
             naveInimigo.SizeMode = PictureBoxSizeMode.StretchImage; 
             naveInimigo.Load("naveInimigo.png"); 
             naveInimigo.BackColor = Color.Transparent; 
-            naveInimigo.Left = 1500;
+            naveInimigo.Left = 1250;
             naveInimigo.Top = 200; 
 
             // tiroJogador
@@ -92,11 +95,21 @@ namespace jogoSpace
             tiroJogador.SizeMode = PictureBoxSizeMode.StretchImage; 
             tiroJogador.Load("tiroJogador.png"); 
             tiroJogador.BackColor = Color.Transparent; 
-            tiroJogador.Left = 3000; 
-            tiroJogador.Top = 420; 
+            tiroJogador.Left = -200; 
+            tiroJogador.Top = 420;
+
+            // tiroInimigo
+            tiroInimigo.Parent = fundo;
+            tiroInimigo.Width = 30;
+            tiroInimigo.Height = 10;
+            tiroInimigo.SizeMode = PictureBoxSizeMode.StretchImage;
+            tiroInimigo.Load("tiroInimigo.png");
+            tiroInimigo.BackColor = Color.Transparent;
+            tiroInimigo.Left = -200;
+            tiroInimigo.Top = 420;
 
             // configurando gameTimer
-            gameTimer.Interval = 16; 
+            gameTimer.Interval = 9; 
             gameTimer.Enabled = true;
             gameTimer.Tick += GameTimerTick;
 
@@ -122,7 +135,7 @@ namespace jogoSpace
             if (naveJogador.Left <= 0)
                 naveJogador.Left = 0;
             if (naveJogador.Top > fundo.Height - naveJogador.Height)
-                naveJogador.Top = naveJogador.Top = fundo.Height - naveJogador.Height;
+                naveJogador.Top = fundo.Height - naveJogador.Height;
             if (naveJogador.Top <= 0)
                 naveJogador.Top = 0;
 
@@ -133,13 +146,14 @@ namespace jogoSpace
                 tiroJogador.Left = naveJogador.Left + naveJogador.Width; 
                 tiroJogador.Top = naveJogador.Top + (naveJogador.Height / 2) - (tiroJogador.Height / 2);
             }
+
         }
         private void GameTimerTick(object sender, EventArgs e)
         {
             // Movimentação do inimigo
             naveInimigo.Top += sentidoInimigo * velocidadeInimigo;
 
-            // Clamping do inimigodddddd
+            // Clamping do inimigo
             if (naveInimigo.Top >= fundo.Height - naveInimigo.Height || naveInimigo.Top <= 0)
                 sentidoInimigo = -sentidoInimigo; 
 
@@ -149,12 +163,28 @@ namespace jogoSpace
             if (tiroJogador.Left >= fundo.Width && tiroAtivo) 
             {
                 tiroAtivo = false; 
-                tiroJogador.Left = 3000; 
+                tiroJogador.Left = -200; 
             }
-            // Teste de colisão entre o tiro e o inimigo
+
+            // Tiro do inimigo
+            if (!tiroInimigoAtivo && rnd.Next(10, 21) == 10)
+            {
+                tiroInimigoAtivo = true;
+                tiroInimigo.Left = naveInimigo.Left;
+                tiroInimigo.Top = naveInimigo.Top + naveInimigo.Height / 2;
+            }
+            if (tiroInimigoAtivo)
+                tiroInimigo.Left -= velocidadeTiro;
+            if (tiroInimigo.Left < 0)
+            {
+                tiroInimigoAtivo = false;
+                tiroInimigo.Left = -100;
+            }
+
+            // Teste de colisão entre o tiroJogador e o inimigo
             if (tiroJogador.Bounds.IntersectsWith(naveInimigo.Bounds))
             {
-                tiroJogador.Left = 5000;
+                tiroJogador.Left = -200;
                 tiroAtivo = false;
 
                 hpInimigo -= rnd.Next(10, 21);
@@ -162,8 +192,28 @@ namespace jogoSpace
 
                 if (hpInimigo <= 0) 
                 {   
-                    naveInimigo.Left = 3000;
+                    naveInimigo.Left = 5000;
                     lbl_hpinimigo.Text = "HP Inimigo: 0";
+                    MessageBox.Show("Você ganhou!");
+                    Dispose();
+                }
+            }
+
+            // Teste de colisão entre o tiroInimigo e o jogador
+            if (tiroInimigo.Bounds.IntersectsWith(naveJogador.Bounds))
+            {
+                tiroInimigoAtivo = false;
+                tiroInimigo.Left = -100;
+
+                hpJogador -= rnd.Next(5, 15);
+                lbl_hpjogador.Text = "HP Jogador: " + hpJogador;
+
+                if (hpJogador <= 0)
+                {
+                    naveJogador.Left = -500;
+                    lbl_hpjogador.Text = "HP Jogador: 0";
+                    MessageBox.Show("Você perdeu!");
+                    Dispose();    
                 }
             }
         }
